@@ -1,0 +1,483 @@
+[
+    {
+        "name":  "Health Check",
+        "method":  "GET",
+        "endpoint":  "/api/health",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "service":  "farmaid-backend",
+                         "status":  "up"
+                     }
+    },
+    {
+        "name":  "Auth Register Farmer",
+        "method":  "POST",
+        "endpoint":  "/api/auth/register",
+        "expectedStatus":  201,
+        "actualStatus":  201,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "message":  "Registration successful",
+                         "user":  {
+                                      "id":  "69c659267b43b0c8c8bae820",
+                                      "fullName":  "API Test Farmer",
+                                      "email":  "apitest+20260327154709@example.com",
+                                      "role":  "farmer"
+                                  },
+                         "accessToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTkyNjdiNDNiMGM4YzhiYWU4MjAiLCJyb2xlIjoiZmFybWVyIiwiaWF0IjoxNzc0NjA2NjMwLCJleHAiOjE3NzQ2MDc1MzB9.om0AY1ujccD9vMl8GEYW1NTkLZLgmisZvo99xMRRasM",
+                         "refreshToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTkyNjdiNDNiMGM4YzhiYWU4MjAiLCJyb2xlIjoiZmFybWVyIiwiaWF0IjoxNzc0NjA2NjMwLCJleHAiOjE3NzUyMTE0MzAsImp0aSI6IjQxYzNkNGZmLTYxZTQtNGM1Mi05MGQ5LTE0MjI1ODQwMWM5MSJ9.6uhW7UonjcmUiYQlytlWwCd8uj7WE5ereN1rrictdWw"
+                     }
+    },
+    {
+        "name":  "Auth Login Farmer",
+        "method":  "POST",
+        "endpoint":  "/api/auth/login",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "user":  {
+                                      "id":  "69c659267b43b0c8c8bae820",
+                                      "fullName":  "API Test Farmer",
+                                      "email":  "apitest+20260327154709@example.com",
+                                      "role":  "farmer"
+                                  },
+                         "accessToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTkyNjdiNDNiMGM4YzhiYWU4MjAiLCJyb2xlIjoiZmFybWVyIiwiaWF0IjoxNzc0NjA2NjMwLCJleHAiOjE3NzQ2MDc1MzB9.om0AY1ujccD9vMl8GEYW1NTkLZLgmisZvo99xMRRasM",
+                         "refreshToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTkyNjdiNDNiMGM4YzhiYWU4MjAiLCJyb2xlIjoiZmFybWVyIiwiaWF0IjoxNzc0NjA2NjMwLCJleHAiOjE3NzUyMTE0MzAsImp0aSI6IjhiYzhlOWM3LWM5MDgtNDE3NC04OWQzLTQ2NDAzM2U4YTVhMyJ9.nQTtULJ80biINxA0F6Nd_CzwO_sFwEEXCGIKYUi23HI"
+                     }
+    },
+    {
+        "name":  "Auth Refresh Token Farmer",
+        "method":  "POST",
+        "endpoint":  "/api/auth/refresh-token",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "accessToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTkyNjdiNDNiMGM4YzhiYWU4MjAiLCJyb2xlIjoiZmFybWVyIiwiaWF0IjoxNzc0NjA2NjMwLCJleHAiOjE3NzQ2MDc1MzB9.om0AY1ujccD9vMl8GEYW1NTkLZLgmisZvo99xMRRasM"
+                     }
+    },
+    {
+        "name":  "Users Get Me Farmer",
+        "method":  "GET",
+        "endpoint":  "/api/users/me",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "profile":  {
+                                         "userId":  "69c659267b43b0c8c8bae820",
+                                         "name":  "API Test Farmer",
+                                         "email":  "apitest+20260327154709@example.com",
+                                         "phone":  "+91 98765 43210",
+                                         "location":  "Punjab, India",
+                                         "totalArea":  "45 Acres",
+                                         "soilType":  "Alluvial Soil",
+                                         "irrigationMethod":  "Drip \u0026 Sprinkler",
+                                         "mainCrops":  "Wheat, Rice, Cotton",
+                                         "profileImage":  "",
+                                         "updatedAt":  "2026-03-27T10:17:10.144Z"
+                                     }
+                     }
+    },
+    {
+        "name":  "Users Update Me Farmer",
+        "method":  "PUT",
+        "endpoint":  "/api/users/me",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "profile":  {
+                                         "userId":  "69c659267b43b0c8c8bae820",
+                                         "name":  "API Test Farmer",
+                                         "email":  "apitest+20260327154709@example.com",
+                                         "phone":  "+91 98765 43210",
+                                         "location":  "Ahmedabad, India",
+                                         "totalArea":  "45 Acres",
+                                         "soilType":  "Alluvial Soil",
+                                         "irrigationMethod":  "Drip \u0026 Sprinkler",
+                                         "mainCrops":  "Wheat, Cotton",
+                                         "profileImage":  "",
+                                         "updatedAt":  "2026-03-27T10:17:10.269Z"
+                                     }
+                     }
+    },
+    {
+        "name":  "AI Predict Crop",
+        "method":  "POST",
+        "endpoint":  "/api/predict",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "recommendations":  [
+                                                 {
+                                                     "crop":  "Sugarcane",
+                                                     "match":  90
+                                                 },
+                                                 {
+                                                     "crop":  "Rice",
+                                                     "match":  82
+                                                 },
+                                                 {
+                                                     "crop":  "Cotton",
+                                                     "match":  74
+                                                 }
+                                             ],
+                         "explanation":  "Recommendation generated from current NPK and weather pattern inputs."
+                     }
+    },
+    {
+        "name":  "AI Detect Disease",
+        "method":  "POST",
+        "endpoint":  "/api/detect-disease",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "disease":  "Leaf Blight",
+                         "confidence":  0.91,
+                         "severity":  "Medium",
+                         "treatment":  {
+                                           "pesticide":  "Copper Oxychloride",
+                                           "dosage":  "2g per liter of water",
+                                           "frequency":  "Apply every 7 days for 3 cycles"
+                                       },
+                         "prevention":  [
+                                            "Remove infected leaves early",
+                                            "Avoid overhead irrigation in late evening",
+                                            "Use disease-resistant varieties when possible"
+                                        ]
+                     }
+    },
+    {
+        "name":  "Settings Get Me Farmer",
+        "method":  "GET",
+        "endpoint":  "/api/settings/me",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "settings":  {
+                                          "_id":  "69c659267b43b0c8c8bae824",
+                                          "userId":  "69c659267b43b0c8c8bae820",
+                                          "notifications":  true,
+                                          "twoFactor":  false,
+                                          "automaticBackups":  true,
+                                          "cacheSize":  "256 MB",
+                                          "language":  "english",
+                                          "theme":  "dark",
+                                          "createdAt":  "2026-03-27T10:17:10.146Z",
+                                          "updatedAt":  "2026-03-27T10:17:10.146Z",
+                                          "__v":  0
+                                      }
+                     }
+    },
+    {
+        "name":  "Settings Update Me Farmer",
+        "method":  "PUT",
+        "endpoint":  "/api/settings/me",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "settings":  {
+                                          "_id":  "69c659267b43b0c8c8bae824",
+                                          "userId":  "69c659267b43b0c8c8bae820",
+                                          "notifications":  true,
+                                          "twoFactor":  false,
+                                          "automaticBackups":  true,
+                                          "cacheSize":  "512 MB",
+                                          "language":  "english",
+                                          "theme":  "dark",
+                                          "createdAt":  "2026-03-27T10:17:10.146Z",
+                                          "updatedAt":  "2026-03-27T10:17:10.446Z",
+                                          "__v":  0
+                                      }
+                     }
+    },
+    {
+        "name":  "Auth Login Admin",
+        "method":  "POST",
+        "endpoint":  "/api/auth/login",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "user":  {
+                                      "id":  "69c651c5e19b3c2610410197",
+                                      "fullName":  "Admin User",
+                                      "email":  "admin@farmaid.ai",
+                                      "role":  "admin"
+                                  },
+                         "accessToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTFjNWUxOWIzYzI2MTA0MTAxOTciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ2MDY2MzAsImV4cCI6MTc3NDYwNzUzMH0.tcg4Y0MBRzWr6_D1KvgZeMfFnTnYKqSptseRIwn9hLE",
+                         "refreshToken":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM2NTFjNWUxOWIzYzI2MTA0MTAxOTciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ2MDY2MzAsImV4cCI6MTc3NTIxMTQzMCwianRpIjoiYjE3MTBkMzktMDJiNy00MzYwLThhNDItOGNmN2NmM2MwNzk0In0.dvHOAZSCzXYs4ylGwiDdaqAY-UPdX9vv_bRVmC0Z9Oo"
+                     }
+    },
+    {
+        "name":  "Admin List Farmers",
+        "method":  "GET",
+        "endpoint":  "/api/admin/farmers?search=API%20Test\u0026page=1\u0026limit=10",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "farmers":  [
+                                         {
+                                             "id":  "69c65552e19b3c26104101b9",
+                                             "name":  "API Test Farmer",
+                                             "email":  "apitest+20260327153032@example.com",
+                                             "phone":  "+91 98765 43210",
+                                             "location":  "Punjab, India",
+                                             "farmSize":  "45 Acres",
+                                             "crops":  "Wheat, Rice, Cotton",
+                                             "joinedDate":  "2026-03-27T10:00:50.064Z"
+                                         },
+                                         {
+                                             "id":  "69c65669bf901fe4a36d12fd",
+                                             "name":  "API Test Farmer",
+                                             "email":  "apitest+20260327153529@example.com",
+                                             "phone":  "+91 98765 43210",
+                                             "location":  "Punjab, India",
+                                             "farmSize":  "45 Acres",
+                                             "crops":  "Wheat, Rice, Cotton",
+                                             "joinedDate":  "2026-03-27T10:05:29.677Z"
+                                         },
+                                         {
+                                             "id":  "69c65758759947a988a0786d",
+                                             "name":  "API Test Farmer",
+                                             "email":  "apitest+20260327153928@example.com",
+                                             "phone":  "+91 98765 43210",
+                                             "location":  "Punjab, India",
+                                             "farmSize":  "45 Acres",
+                                             "crops":  "Wheat, Rice, Cotton",
+                                             "joinedDate":  "2026-03-27T10:09:28.295Z"
+                                         },
+                                         {
+                                             "id":  "69c659267b43b0c8c8bae820",
+                                             "name":  "API Test Farmer",
+                                             "email":  "apitest+20260327154709@example.com",
+                                             "phone":  "+91 98765 43210",
+                                             "location":  "Ahmedabad, India",
+                                             "farmSize":  "45 Acres",
+                                             "crops":  "Wheat, Cotton",
+                                             "joinedDate":  "2026-03-27T10:17:10.132Z"
+                                         }
+                                     ],
+                         "total":  4,
+                         "pagination":  {
+                                            "page":  1,
+                                            "limit":  10,
+                                            "totalPages":  1
+                                        }
+                     }
+    },
+    {
+        "name":  "Admin Get Farmer By Id",
+        "method":  "GET",
+        "endpoint":  "/api/admin/farmers/69c659267b43b0c8c8bae820",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "farmer":  {
+                                        "id":  "69c659267b43b0c8c8bae820",
+                                        "name":  "API Test Farmer",
+                                        "email":  "apitest+20260327154709@example.com",
+                                        "phone":  "+91 98765 43210",
+                                        "location":  "Ahmedabad, India",
+                                        "farmSize":  "45 Acres",
+                                        "crops":  "Wheat, Cotton",
+                                        "joinedDate":  "2026-03-27T10:17:10.132Z"
+                                    }
+                     }
+    },
+    {
+        "name":  "Admin List Logs",
+        "method":  "GET",
+        "endpoint":  "/api/admin/logs?page=1\u0026limit=20",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "logs":  [
+                                      {
+                                          "_id":  "69c657af759947a988a078bb",
+                                          "actionType":  "farmer_deleted",
+                                          "details":  {
+                                                          "farmerId":  "69c657af759947a988a07885",
+                                                          "by":  "69c651c5e19b3c2610410197"
+                                                      },
+                                          "createdAt":  "2026-03-27T10:10:55.906Z",
+                                          "updatedAt":  "2026-03-27T10:10:55.906Z",
+                                          "__v":  0
+                                      }
+                                  ],
+                         "total":  1,
+                         "pagination":  {
+                                            "page":  1,
+                                            "limit":  20,
+                                            "totalPages":  1
+                                        }
+                     }
+    },
+    {
+        "name":  "Admin Dashboard",
+        "method":  "GET",
+        "endpoint":  "/api/admin/dashboard",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "metrics":  {
+                                         "totalFarmers":  5,
+                                         "totalRecommendations":  4,
+                                         "totalDetections":  3
+                                     },
+                         "trends":  {
+                                        "recommendationsLast7Days":  [
+                                                                         2,
+                                                                         4,
+                                                                         3,
+                                                                         6,
+                                                                         8,
+                                                                         5,
+                                                                         7
+                                                                     ],
+                                        "detectionsLast7Days":  [
+                                                                    1,
+                                                                    1,
+                                                                    2,
+                                                                    3,
+                                                                    2,
+                                                                    4,
+                                                                    2
+                                                                ]
+                                    }
+                     }
+    },
+    {
+        "name":  "Admin Get Settings",
+        "method":  "GET",
+        "endpoint":  "/api/admin/settings",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "settings":  {
+                                          "notifications":  {
+                                                                "emailNotifications":  true,
+                                                                "pushNotifications":  false,
+                                                                "digestFrequency":  "daily"
+                                                            },
+                                          "security":  {
+                                                           "twoFactorEnabled":  false,
+                                                           "autoBackupEnabled":  true
+                                                       },
+                                          "system":  {
+                                                         "theme":  "dark",
+                                                         "language":  "english",
+                                                         "timezone":  "Asia/Kolkata"
+                                                     },
+                                          "data":  {
+                                                       "dataRetentionDays":  120,
+                                                       "apiRateLimit":  150
+                                                   },
+                                          "_id":  "69c657af759947a988a078b2",
+                                          "createdAt":  "2026-03-27T10:10:55.871Z",
+                                          "updatedAt":  "2026-03-27T10:10:55.884Z",
+                                          "__v":  0
+                                      }
+                     }
+    },
+    {
+        "name":  "Admin Update Settings",
+        "method":  "PUT",
+        "endpoint":  "/api/admin/settings",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "settings":  {
+                                          "notifications":  {
+                                                                "emailNotifications":  true,
+                                                                "pushNotifications":  false,
+                                                                "digestFrequency":  "daily"
+                                                            },
+                                          "security":  {
+                                                           "twoFactorEnabled":  false,
+                                                           "autoBackupEnabled":  true
+                                                       },
+                                          "system":  {
+                                                         "theme":  "dark",
+                                                         "language":  "english",
+                                                         "timezone":  "Asia/Kolkata"
+                                                     },
+                                          "data":  {
+                                                       "dataRetentionDays":  120,
+                                                       "apiRateLimit":  150
+                                                   },
+                                          "_id":  "69c657af759947a988a078b2",
+                                          "createdAt":  "2026-03-27T10:10:55.871Z",
+                                          "updatedAt":  "2026-03-27T10:17:10.657Z",
+                                          "__v":  0
+                                      }
+                     }
+    },
+    {
+        "name":  "Admin Delete Farmer",
+        "method":  "DELETE",
+        "endpoint":  "/api/admin/farmers/69c659267b43b0c8c8bae820",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "message":  "Farmer deleted"
+                     }
+    },
+    {
+        "name":  "Auth Logout Farmer",
+        "method":  "POST",
+        "endpoint":  "/api/auth/logout",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "message":  "Logged out"
+                     }
+    },
+    {
+        "name":  "Auth Logout Admin",
+        "method":  "POST",
+        "endpoint":  "/api/auth/logout",
+        "expectedStatus":  200,
+        "actualStatus":  200,
+        "passed":  true,
+        "response":  {
+                         "success":  true,
+                         "message":  "Logged out"
+                     }
+    }
+]

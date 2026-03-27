@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Upload, FileText, MapPin, Calendar, Zap, Droplets, Thermometer, CloudRain, Camera, Leaf } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getLocalizedCopy } from '../lib/getLocalizedCopy';
+import { getCropRecommendations } from '../api/crop.api';
 
 const LOCATIONS = [
   { name: 'Punjab', temp: 28, rainfall: 650, season: 'Kharif' },
@@ -225,21 +226,15 @@ export function CropRecommendation() {
     setShowResults(false);
     
     try {
-      const response = await fetch("http://localhost:5001/api/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          N: soilData.nitrogen,
-          P: soilData.phosphorus,
-          K: soilData.potassium,
-          temperature: soilData.temperature,
-          humidity: soilData.humidity,
-          ph: soilData.ph,
-          rainfall: soilData.rainfall,
-        }),
+      const data = await getCropRecommendations({
+        N: soilData.nitrogen,
+        P: soilData.phosphorus,
+        K: soilData.potassium,
+        temperature: soilData.temperature,
+        humidity: soilData.humidity,
+        ph: soilData.ph,
+        rainfall: soilData.rainfall,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         setRecommendations(data.recommendations);

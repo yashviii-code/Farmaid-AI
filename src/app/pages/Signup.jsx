@@ -108,7 +108,7 @@ const SIGNUP_COPY = {
 
 export function Signup() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const { language } = useLanguage();
   const copy = getLocalizedCopy(language, SIGNUP_COPY);
 
@@ -121,7 +121,7 @@ export function Signup() {
   });
   const [error, setError] = useState("");
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -130,8 +130,12 @@ export function Signup() {
     }
 
     setError("");
-    login(form.email, form.password, "farmer");
-    navigate("/dashboard");
+    try {
+      await signup(form.fullName, form.email, form.password);
+      navigate("/dashboard");
+    } catch {
+      setError("Signup failed. Please try again.");
+    }
   };
 
   return (

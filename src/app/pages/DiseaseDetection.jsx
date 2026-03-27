@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { useLanguage } from "../context/LanguageContext";
 import { getLocalizedCopy } from "../lib/getLocalizedCopy";
+import { detectDisease } from "../api/disease.api";
 
 const DISEASE_DETECTION_COPY = {
   english: {
@@ -201,16 +202,7 @@ export function DiseaseDetection() {
     try {
       const res = await fetch(selectedImage);
       const blob = await res.blob();
-      
-      const formData = new FormData();
-      formData.append("image", blob, "image.jpg");
-
-      const response = await fetch("http://localhost:5001/api/detect-disease", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
+      const data = await detectDisease(blob);
 
       if (data.success) {
         setResult({

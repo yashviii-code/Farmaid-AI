@@ -141,17 +141,28 @@ export function Login() {
   const copy = getLocalizedCopy(language, LOGIN_COPY);
   const [farmerForm, setFarmerForm] = useState({ email: "", password: "" });
   const [adminForm, setAdminForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
 
-  const handleFarmerLogin = (e) => {
+  const handleFarmerLogin = async (e) => {
     e.preventDefault();
-    login(farmerForm.email, farmerForm.password, "farmer");
-    navigate("/dashboard");
+    try {
+      setError("");
+      await login(farmerForm.email, farmerForm.password, "farmer");
+      navigate("/dashboard");
+    } catch {
+      setError("Login failed. Please check your credentials.");
+    }
   };
 
-  const handleAdminLogin = (e) => {
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
-    login(adminForm.email, adminForm.password, "admin");
-    navigate("/admin-dashboard");
+    try {
+      setError("");
+      await login(adminForm.email, adminForm.password, "admin");
+      navigate("/admin-dashboard");
+    } catch {
+      setError("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -429,6 +440,12 @@ export function Login() {
                   </motion.div>
                 </TabsContent>
               </Tabs>
+
+              {error && (
+                <div className="mt-4 dark:bg-red-500/10 dark:border-red-500/30 bg-red-100 border-red-300 rounded-xl p-3 border text-sm dark:text-red-400 text-red-700 text-center">
+                  {error}
+                </div>
+              )}
 
               <div className="mt-8 pt-6 border-t border-gray-700">
                 <Link to="/" className="flex items-center justify-center gap-2 text-gray-400 hover:text-green-400 transition-colors text-sm">

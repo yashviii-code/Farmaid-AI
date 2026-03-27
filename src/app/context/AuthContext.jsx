@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { loginUser, logoutUser, registerFarmer } from "../api/auth.api";
+import { getMyProfile, updateMyProfile } from "../api/users.api";
 
 const AuthContext = createContext(undefined);
 
@@ -18,6 +20,11 @@ export function AuthProvider({ children }) {
   const [farmerProfile, setFarmerProfile] = useState(null);
 
   useEffect(() => {
+    const savedUser = localStorage.getItem("farmaidUser");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
     // Load profile from localStorage on mount
     const savedProfile = localStorage.getItem("farmerProfile");
     if (savedProfile) {
@@ -25,37 +32,88 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = (email, password, role) => {
-    // Mock login
-    setUser({
-      name: role === "farmer" ? "John Farmer" : "Admin User",
-      email,
-      role,
-    });
+  const login = async (email, password, role) => {
+    const data = await loginUser({ email, password, role });
+    const nextUser = {
+      name: data.user.fullName,
+      email: data.user.email,
+      role: data.user.role,
+    };
 
-    if (role === "farmer") {
-      const savedProfile = localStorage.getItem("farmerProfile");
-      if (savedProfile) {
-        setFarmerProfile(JSON.parse(savedProfile));
-      } else {
+    setUser(nextUser);
+    localStorage.setItem("farmaidUser", JSON.stringify(nextUser));
+
+    if (data.user.role === "farmer") {
+      try {
+        const profileData = await getMyProfile();
+        const profile = profileData.profile || DEFAULT_PROFILE;
+        setFarmerProfile(profile);
+        localStorage.setItem("farmerProfile", JSON.stringify(profile));
+      } catch {
         setFarmerProfile(DEFAULT_PROFILE);
         localStorage.setItem("farmerProfile", JSON.stringify(DEFAULT_PROFILE));
       }
+    } else {
+      setFarmerProfile(null);
+      localStorage.removeItem("farmerProfile");
+    }
+
+    return data;
+  };
+
+  const signup = async (fullName, email, password) => {
+    const data = await registerFarmer({ fullName, email, password });
+    const nextUser = {
+      name: data.user.fullName,
+      email: data.user.email,
+      role: data.user.role,
+    };
+
+    setUser(nextUser);
+    localStorage.setItem("farmaidUser", JSON.stringify(nextUser));
+
+    const profileData = await getMyProfile();
+    const profile = profileData.profile || {
+      ...DEFAULT_PROFILE,
+      name: fullName,
+      email,
+    };
+
+    setFarmerProfile(profile);
+    localStorage.setItem("farmerProfile", JSON.stringify(profile));
+
+    return data;
+  };
+
+  const logout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // Ignore network failures during logout cleanup.
+    }
+
+    setUser(null);
+    setFarmerProfile(null);
+    localStorage.removeItem("farmaidUser");
+    localStorage.removeItem("farmerProfile");
+  };
+
+  const updateFarmerProfile = async (profile) => {
+    try {
+      const data = await updateMyProfile(profile);
+      const updatedProfile = data.profile || profile;
+      setFarmerProfile(updatedProfile);
+      localStorage.setItem("farmerProfile", JSON.stringify(updatedProfile));
+      return updatedProfile;
+    } catch {
+      setFarmerProfile(profile);
+      localStorage.setItem("farmerProfile", JSON.stringify(profile));
+      return profile;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setFarmerProfile(null);
-  };
-
-  const updateFarmerProfile = (profile) => {
-    setFarmerProfile(profile);
-    localStorage.setItem("farmerProfile", JSON.stringify(profile));
-  };
-
   return (
-    <AuthContext.Provider value={{ user, farmerProfile, login, logout, updateFarmerProfile }}>
+    <AuthContext.Provider value={{ user, farmerProfile, login, signup, logout, updateFarmerProfile }}>
       {children}
     </AuthContext.Provider>
   );
