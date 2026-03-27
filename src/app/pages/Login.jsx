@@ -353,7 +353,7 @@ export function Login() {
 
                     <p className="mt-6 text-center dark:text-gray-400 text-slate-600 text-sm">
                       {copy.farmer.signUpPrompt}{" "}
-                      <a href="#" className="dark:text-green-400 dark:hover:text-green-300 text-green-600 hover:text-green-700 font-semibold">{copy.farmer.signUpLink}</a>
+                      <Link to="/signup" className="dark:text-green-400 dark:hover:text-green-300 text-green-600 hover:text-green-700 font-semibold">{copy.farmer.signUpLink}</Link>
                     </p>
                   </motion.div>
                 </TabsContent>
