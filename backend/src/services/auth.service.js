@@ -18,7 +18,9 @@ function toPublicUser(user) {
 }
 
 export async function registerUser({ fullName, email, password }) {
-    const normalizedEmail = String(email).toLowerCase();
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedFullName = String(fullName).trim();
+    const normalizedPassword = String(password);
 
     if (isMongoReady()) {
         const existing = await User.findOne({ email: normalizedEmail });
@@ -26,9 +28,9 @@ export async function registerUser({ fullName, email, password }) {
             return { error: "Email already registered", status: 409 };
         }
 
-        const passwordHash = await bcrypt.hash(password, 10);
+        const passwordHash = await bcrypt.hash(normalizedPassword, 10);
         const user = await User.create({
-            fullName,
+            fullName: normalizedFullName,
             email: normalizedEmail,
             passwordHash,
             role: "farmer",
@@ -77,10 +79,10 @@ export async function registerUser({ fullName, email, password }) {
         return { error: "Email already registered", status: 409 };
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(normalizedPassword, 10);
     const user = {
         id: uuid(),
-        fullName,
+        fullName: normalizedFullName,
         email: normalizedEmail,
         passwordHash,
         role: "farmer",
@@ -107,7 +109,9 @@ export async function registerUser({ fullName, email, password }) {
 }
 
 export async function loginUser({ email, password, role }) {
-    const normalizedEmail = String(email).toLowerCase();
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const providedPassword = String(password);
+    const normalizedRole = typeof role === "string" ? role.trim().toLowerCase() : role;
 
     let user;
     if (isMongoReady()) {
@@ -120,12 +124,12 @@ export async function loginUser({ email, password, role }) {
         return { error: "Invalid credentials", status: 401 };
     }
 
-    const isValid = await bcrypt.compare(password, user.passwordHash);
+    const isValid = await bcrypt.compare(providedPassword, user.passwordHash);
     if (!isValid) {
         return { error: "Invalid credentials", status: 401 };
     }
 
-    if (role && role !== user.role) {
+    if (normalizedRole && normalizedRole !== user.role) {
         return { error: "Role mismatch", status: 403 };
     }
 

@@ -10,11 +10,14 @@ const cropPredictionSchema = new mongoose.Schema(
             humidity: Number,
             ph: Number,
             rainfall: Number,
+            location: String,
+            season: String,
+            soil: String,
         },
         recommendations: [
             {
                 crop: String,
-                match: Number,
+                confidence: Number,
             },
         ],
         explanation: String,

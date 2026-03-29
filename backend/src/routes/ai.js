@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { detectDisease, predict } from "../controllers/ai.controller.js";
+import { validateCropPrediction } from "../middleware/validateCropPrediction.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -9,5 +10,6 @@ const upload = multer({
 
 export const aiRouter = express.Router();
 
-aiRouter.post("/predict", predict);
+aiRouter.post("/predict", validateCropPrediction, predict);
+aiRouter.post("/crop/predict", validateCropPrediction, predict);
 aiRouter.post("/detect-disease", upload.single("image"), detectDisease);

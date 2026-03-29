@@ -61,7 +61,7 @@ const DISEASE_DETECTION_COPY = {
     },
     errors: {
       failedDetection: "Failed to detect disease.",
-      backendUnavailable: "An error occurred. Make sure the backend server is running on port 5001.",
+      backendUnavailable: "An error occurred. Make sure the backend server is running and the API URL is correct.",
     },
   },
   hindi: {
@@ -116,7 +116,7 @@ const DISEASE_DETECTION_COPY = {
     },
     errors: {
       failedDetection: "रोग की पहचान नहीं हो सकी।",
-      backendUnavailable: "एक त्रुटि हुई। कृपया सुनिश्चित करें कि बैकएंड सर्वर पोर्ट 5001 पर चल रहा है।",
+      backendUnavailable: "एक त्रुटि हुई। कृपया सुनिश्चित करें कि बैकएंड सर्वर चल रहा है और API URL सही है।",
     },
   },
   gujarati: {
@@ -171,7 +171,7 @@ const DISEASE_DETECTION_COPY = {
     },
     errors: {
       failedDetection: "રોગ ઓળખવામાં નિષ્ફળતા.",
-      backendUnavailable: "ભૂલ આવી. ખાતરી કરો કે બેકએન્ડ સર્વર 5001 પોર્ટ પર ચાલુ છે.",
+      backendUnavailable: "ભૂલ આવી. ખાતરી કરો કે બેકએન્ડ સર્વર ચાલુ છે અને API URL સાચો છે.",
     },
   },
 };

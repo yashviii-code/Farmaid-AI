@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import axios from "axios";
 import { Sprout, User, Shield, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -143,14 +144,29 @@ export function Login() {
   const [adminForm, setAdminForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
+  const getLoginErrorMessage = (err) => {
+    if (axios.isAxiosError(err)) {
+      const apiMessage = err.response?.data?.error;
+      if (apiMessage) {
+        return apiMessage;
+      }
+
+      if (!err.response) {
+        return "Unable to reach the server. Please confirm the backend is running and the API URL is correct.";
+      }
+    }
+
+    return "Login failed. Please check your credentials.";
+  };
+
   const handleFarmerLogin = async (e) => {
     e.preventDefault();
     try {
       setError("");
       await login(farmerForm.email, farmerForm.password, "farmer");
       navigate("/dashboard");
-    } catch {
-      setError("Login failed. Please check your credentials.");
+    } catch (err) {
+      setError(getLoginErrorMessage(err));
     }
   };
 
@@ -160,8 +176,8 @@ export function Login() {
       setError("");
       await login(adminForm.email, adminForm.password, "admin");
       navigate("/admin-dashboard");
-    } catch {
-      setError("Login failed. Please check your credentials.");
+    } catch (err) {
+      setError(getLoginErrorMessage(err));
     }
   };
 

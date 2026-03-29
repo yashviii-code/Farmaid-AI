@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$baseUrl = 'http://localhost:5001'
+$baseUrl = if ($env:BASE_URL) { $env:BASE_URL } else { 'http://localhost:5001' }
 $script:results = @()
 
 function Add-Result {

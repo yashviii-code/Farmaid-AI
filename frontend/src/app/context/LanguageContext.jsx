@@ -277,8 +277,12 @@ export function LanguageProvider({ children }) {
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('farmaidLanguage');
-    if (savedLanguage && translations[savedLanguage]) {
-      setLanguage(savedLanguage);
+    const savedShortCode = localStorage.getItem('lang');
+    const mappedShortCode = savedShortCode === 'gu' ? 'gujarati' : savedShortCode === 'en' ? 'english' : null;
+    const resolvedLanguage = savedLanguage || mappedShortCode;
+
+    if (resolvedLanguage && translations[resolvedLanguage]) {
+      setLanguage(resolvedLanguage);
     }
   }, []);
 
@@ -286,6 +290,11 @@ export function LanguageProvider({ children }) {
     if (translations[newLanguage]) {
       setLanguage(newLanguage);
       localStorage.setItem('farmaidLanguage', newLanguage);
+      if (newLanguage === 'english') {
+        localStorage.setItem('lang', 'en');
+      } else if (newLanguage === 'gujarati') {
+        localStorage.setItem('lang', 'gu');
+      }
     }
   };
 

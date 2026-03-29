@@ -132,7 +132,7 @@ export function Signup() {
     setError("");
     try {
       await signup(form.fullName, form.email, form.password);
-      navigate("/dashboard");
+      navigate("/login");
     } catch {
       setError("Signup failed. Please try again.");
     }

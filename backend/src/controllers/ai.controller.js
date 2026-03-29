@@ -2,8 +2,15 @@ import { fail, ok } from "../utils/response.js";
 import * as aiService from "../services/ai.service.js";
 
 export async function predict(req, res) {
-  const result = await aiService.createPrediction(req.body || {});
-  return ok(res, result);
+  try {
+    const result = await aiService.createPrediction(req.body || {});
+    return res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    return fail(res, error.message || "Prediction failed", error.status || 500);
+  }
 }
 
 export async function detectDisease(req, res) {
