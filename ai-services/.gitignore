@@ -1,0 +1,11 @@
+# Ignore dataset
+data/plant_disease/
+data/*.csv
+
+# Ignore models
+*.h5
+*.pkl
+*.pth
+
+# Python cache
+__pycache__/

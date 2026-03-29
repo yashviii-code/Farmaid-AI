@@ -1,4 +1,5 @@
 import axios from "axios";
+import FormData from "form-data";
 import { v4 as uuid } from "uuid";
 import { isMongoReady } from "../config/database.js";
 import { db } from "../data/store.js";
@@ -6,6 +7,8 @@ import { CropPrediction } from "../models/CropPrediction.js";
 import { DiseaseDetection } from "../models/DiseaseDetection.js";
 
 const FLASK_API_BASE_URL = process.env.FLASK_API_URL || "http://localhost:5000";
+const DISEASE_FLASK_API_BASE_URL =
+    process.env.DISEASE_FLASK_API_URL || "http://localhost:5002";
 
 function normalizePayload(payload) {
     return {
@@ -77,20 +80,56 @@ export async function createPrediction(payload) {
 }
 
 export async function detectDiseaseFromImage(file) {
+    console.log("Disease detection request received:", {
+        fileName: file?.originalname || "",
+        mimeType: file?.mimetype || "",
+        size: file?.size || 0,
+    });
+
+    const form = new FormData();
+    form.append("file", file.buffer, {
+        filename: file.originalname || "image.jpg",
+        contentType: file.mimetype || "image/jpeg",
+        knownLength: file.size || undefined,
+    });
+
+    let flaskResponse;
+    try {
+        flaskResponse = await axios.post(
+            `${DISEASE_FLASK_API_BASE_URL}/predict`,
+            form,
+            {
+                timeout: 30000,
+                headers: form.getHeaders(),
+                maxBodyLength: Infinity,
+                maxContentLength: Infinity,
+            },
+        );
+    } catch (error) {
+        if (error.response) {
+            const message = error.response.data?.error || "Flask service returned an error";
+            const wrappedError = new Error(message);
+            wrappedError.status = error.response.status;
+            wrappedError.details = error.response.data?.details || null;
+            throw wrappedError;
+        }
+
+        if (error.request) {
+            const wrappedError = new Error("Flask disease service is not reachable");
+            wrappedError.status = 502;
+            throw wrappedError;
+        }
+
+        const wrappedError = new Error(error.message || "Failed to call Flask disease service");
+        wrappedError.status = 500;
+        throw wrappedError;
+    }
+
+    console.log("Flask disease response:", flaskResponse.data);
+
     const result = {
-        disease: "Leaf Blight",
-        confidence: 0.91,
-        severity: "Medium",
-        treatment: {
-            pesticide: "Copper Oxychloride",
-            dosage: "2g per liter of water",
-            frequency: "Apply every 7 days for 3 cycles",
-        },
-        prevention: [
-            "Remove infected leaves early",
-            "Avoid overhead irrigation in late evening",
-            "Use disease-resistant varieties when possible",
-        ],
+        disease: String(flaskResponse.data?.disease || ""),
+        confidence: Number(flaskResponse.data?.confidence || 0),
     };
 
     if (isMongoReady()) {
