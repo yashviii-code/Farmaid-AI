@@ -31,3 +31,25 @@ export function requireRole(role) {
     next();
   };
 }
+
+export async function optionalAuth(req, _, next) {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+  if (!token) {
+    next();
+    return;
+  }
+
+  try {
+    const decoded = verifyAccessToken(token);
+    const user = await getUserById(decoded.sub);
+    if (user) {
+      req.user = user;
+    }
+  } catch {
+    // Ignore invalid optional auth and continue without a user context.
+  }
+
+  next();
+}

@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { getLocalizedCopy } from "../lib/getLocalizedCopy";
+import { getRecentActivities } from "../api/activity.api";
 
 const PROFILE_COPY = {
   english: {
@@ -29,12 +30,9 @@ const PROFILE_COPY = {
     },
     stats: ["Crops Analyzed", "Diseases Detected", "Years Active", "Accuracy Score"],
     recentActivityTitle: "Recent Activity",
-    recentActivity: [
-      { action: "Rice crop recommendation generated", date: "Today, 10:30 AM" },
-      { action: "Detected Leaf Blight in Wheat", date: "Yesterday, 2:15 PM" },
-      { action: "Updated farm location to Punjab", date: "3 days ago" },
-      { action: "Uploaded soil lab report", date: "1 week ago" },
-    ],
+    recentActivityLoading: "Loading recent activity...",
+    recentActivityEmpty: "No recent activity yet.",
+    recentActivityError: "Unable to load recent activity right now.",
     farmDetailsTitle: "Farm Details",
     unsavedChanges: "You have unsaved changes",
     editProfile: "Edit Profile",
@@ -127,6 +125,9 @@ export function Profile() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [profileImage, setProfileImage] = useState(farmerProfile?.profileImage || "");
+  const [activities, setActivities] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [activityError, setActivityError] = useState("");
   const fileInputRef = useRef(null);
   
   const [editedProfile, setEditedProfile] = useState(
@@ -140,7 +141,31 @@ export function Profile() {
     { label: copy.stats[3], value: "98%", icon: Award },
   ];
 
-  const recentActivity = copy.recentActivity;
+  const formatActivityDate = (dateValue) => {
+    if (!dateValue) {
+      return "";
+    }
+
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffInDays = Math.round((today - targetDay) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays <= 0) {
+      return `Today, ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+    }
+
+    if (diffInDays === 1) {
+      return `Yesterday, ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+    }
+
+    return `${diffInDays} days ago`;
+  };
 
   const handleInputChange = (field, value) => {
     setEditedProfile((prev) => ({ ...prev, [field]: value }));
@@ -179,6 +204,42 @@ export function Profile() {
       setEditedProfile(defaultProfile);
     }
   }, [language, farmerProfile, hasChanges, isEditMode]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadActivities() {
+      setActivityLoading(true);
+      setActivityError("");
+
+      try {
+        const data = await getRecentActivities(10);
+        if (!isMounted) {
+          return;
+        }
+
+        setActivities(data);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        setActivityError(
+          error?.response?.data?.error || copy.recentActivityError
+        );
+      } finally {
+        if (isMounted) {
+          setActivityLoading(false);
+        }
+      }
+    }
+
+    loadActivities();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [copy.recentActivityError]);
 
   const displayProfile = farmerProfile || editedProfile;
   const displayImage = profileImage || displayProfile.profileImage;
@@ -403,15 +464,23 @@ export function Profile() {
                 <Clock className="w-5 h-5 text-green-400" /> {copy.recentActivityTitle}
               </h3>
               <div className="space-y-4">
-                {recentActivity.map((activity, i) => (
-                  <div key={i} className="flex gap-4 items-start relative pb-4 border-b border-slate-800 last:border-0 last:pb-0">
-                    <div className="w-2 h-2 mt-2 rounded-full bg-green-500 ring-4 ring-green-500/20 shrink-0"></div>
-                    <div>
-                      <div className="text-white font-medium">{activity.action}</div>
-                      <div className="text-sm text-gray-500 mt-1">{activity.date}</div>
+                {activityLoading ? (
+                  <div className="text-sm text-gray-400">{copy.recentActivityLoading}</div>
+                ) : activityError ? (
+                  <div className="text-sm text-red-300">{activityError}</div>
+                ) : activities.length ? (
+                  activities.map((activity, i) => (
+                    <div key={`${activity.createdAt}-${i}`} className="flex gap-4 items-start relative pb-4 border-b border-slate-800 last:border-0 last:pb-0">
+                      <div className="w-2 h-2 mt-2 rounded-full bg-green-500 ring-4 ring-green-500/20 shrink-0"></div>
+                      <div>
+                        <div className="text-white font-medium">{activity.message}</div>
+                        <div className="text-sm text-gray-500 mt-1">{formatActivityDate(activity.createdAt)}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="text-sm text-gray-400">{copy.recentActivityEmpty}</div>
+                )}
               </div>
             </div>
 
