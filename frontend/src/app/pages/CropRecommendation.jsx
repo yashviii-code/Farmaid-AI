@@ -4,6 +4,7 @@ import { FileText, Leaf, Sprout } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { translate } from "../lib/translate";
 import { getCropRecommendations } from "../api/crop.api";
+import { getCurrentLocationWeather } from "../api/location.api";
 
 const LOCATION_OPTIONS = [
   "Andhra Pradesh",
@@ -81,7 +82,9 @@ export function CropRecommendation() {
   const [recommendations, setRecommendations] = useState([]);
   const [explanation, setExplanation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState("");
+  const [locationStatus, setLocationStatus] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
 
   const validateField = (name, value) => {
@@ -204,6 +207,81 @@ export function CropRecommendation() {
     }
   };
 
+  const applyAutoFilledLocationData = (locationData) => {
+    setFormData((prev) => {
+      const nextFormData = {
+        ...prev,
+        location: locationData.location || prev.location,
+        season: locationData.season || prev.season,
+        temperature:
+          locationData.temperature !== undefined ? String(locationData.temperature) : prev.temperature,
+        humidity: locationData.humidity !== undefined ? String(locationData.humidity) : prev.humidity,
+        rainfall: locationData.rainfall !== undefined ? String(locationData.rainfall) : prev.rainfall,
+      };
+
+      setFieldErrors((currentErrors) => ({
+        ...currentErrors,
+        location: validateField("location", nextFormData.location),
+        season: validateField("season", nextFormData.season),
+        temperature: validateField("temperature", nextFormData.temperature),
+        humidity: validateField("humidity", nextFormData.humidity),
+        rainfall: validateField("rainfall", nextFormData.rainfall),
+      }));
+
+      return nextFormData;
+    });
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError(t("geolocation_not_supported"));
+      return;
+    }
+
+    setLocationLoading(true);
+    setLocationStatus("");
+    setError("");
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const response = await getCurrentLocationWeather({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+
+          const locationData = response?.data || {};
+          applyAutoFilledLocationData(locationData);
+          setLocationStatus(t("current_location_weather_filled"));
+        } catch (requestError) {
+          setLocationStatus("");
+          setError(
+            requestError.response?.data?.error ||
+              requestError.response?.data?.message ||
+              t("failed_current_location"),
+          );
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (geoError) => {
+        setLocationLoading(false);
+        setLocationStatus("");
+        if (geoError?.code === 1) {
+          setError(t("location_permission_denied"));
+          return;
+        }
+
+        setError(t("failed_current_location"));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      },
+    );
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8 pb-12 font-sans">
       <div className="flex items-center gap-5 mb-12">
@@ -276,6 +354,14 @@ export function CropRecommendation() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FieldCard label={t("location")}>
                 <>
+                  <button
+                    type="button"
+                    onClick={handleUseCurrentLocation}
+                    disabled={locationLoading}
+                    className="mb-3 inline-flex w-full items-center justify-center rounded-xl border border-[#00d084]/30 bg-[#00d084]/10 px-4 py-3 text-sm font-semibold text-[#00d084] transition-colors hover:bg-[#00d084]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {locationLoading ? t("detecting_location") : t("use_current_location")}
+                  </button>
                   <select
                     name="location"
                     value={formData.location}
@@ -353,6 +439,12 @@ export function CropRecommendation() {
             {error ? (
               <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
                 {error}
+              </div>
+            ) : null}
+
+            {locationStatus ? (
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                {locationStatus}
               </div>
             ) : null}
 
