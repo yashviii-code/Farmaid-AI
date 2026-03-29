@@ -27,7 +27,12 @@ const DISEASE_COPY = {
     resultTitle: "Detection result",
     diseaseLabel: "Disease",
     confidenceLabel: "Confidence",
-    confidenceSuffix: "% confidence",
+    treatmentTitle: "Treatment",
+    pesticideLabel: "Pesticide",
+    dosageLabel: "Dosage",
+    frequencyLabel: "Frequency",
+    preventionTitle: "Prevention",
+    noPrevention: "No prevention tips available.",
     emptyState: "Upload an image to start disease detection.",
     noFileError: "Please choose an image before submitting.",
     invalidTypeError: "Please upload a JPG, JPEG, or PNG image.",
@@ -103,6 +108,8 @@ export function DiseaseDetection() {
       setResult({
         disease: prediction.disease,
         confidence: Number(prediction.confidence || 0),
+        treatment: prediction.treatment || {},
+        prevention: Array.isArray(prediction.prevention) ? prediction.prevention : [],
       });
     } catch (submitError) {
       setResult(null);
@@ -247,6 +254,57 @@ export function DiseaseDetection() {
                           style={{ width: `${Math.max(4, Math.min(result.confidence * 100, 100))}%` }}
                         />
                       </div>
+                    </div>
+                    <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4">
+                      <div className="mb-3 text-sm font-medium text-amber-200">{copy.treatmentTitle}</div>
+                      <div className="grid gap-3 sm:grid-cols-3">
+                        <div className="rounded-xl border border-amber-300/10 bg-black/10 p-3">
+                          <div className="text-xs uppercase tracking-wide text-amber-200/80">
+                            {copy.pesticideLabel}
+                          </div>
+                          <div className="mt-1 text-sm font-medium text-white">
+                            {result.treatment?.pesticide || "N/A"}
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-amber-300/10 bg-black/10 p-3">
+                          <div className="text-xs uppercase tracking-wide text-amber-200/80">
+                            {copy.dosageLabel}
+                          </div>
+                          <div className="mt-1 text-sm font-medium text-white">
+                            {result.treatment?.dosage || "N/A"}
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-amber-300/10 bg-black/10 p-3">
+                          <div className="text-xs uppercase tracking-wide text-amber-200/80">
+                            {copy.frequencyLabel}
+                          </div>
+                          <div className="mt-1 text-sm font-medium text-white">
+                            {result.treatment?.frequency || "N/A"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-fuchsia-400/20 bg-fuchsia-400/10 p-4">
+                      <div className="mb-3 text-sm font-medium text-fuchsia-200">
+                        {copy.preventionTitle}
+                      </div>
+                      {result.prevention.length ? (
+                        <ul className="space-y-2">
+                          {result.prevention.map((tip) => (
+                            <li
+                              key={tip}
+                              className="flex items-start gap-3 rounded-xl border border-fuchsia-300/10 bg-black/10 p-3 text-sm text-slate-100"
+                            >
+                              <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-fuchsia-300" />
+                              <span>{tip}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="rounded-xl border border-fuchsia-300/10 bg-black/10 p-3 text-sm text-slate-200">
+                          {copy.noPrevention}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (

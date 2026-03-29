@@ -19,8 +19,11 @@ export async function detectDisease(req, res) {
   }
 
   try {
-    const result = await aiService.detectDiseaseFromImage(req.file);
-    return ok(res, { data: result });
+    const flaskResponse = await aiService.detectDiseaseFromImage(req.file);
+    return res.json({
+      success: true,
+      data: flaskResponse,
+    });
   } catch (error) {
     return fail(
       res,

@@ -127,17 +127,17 @@ export async function detectDiseaseFromImage(file) {
 
     console.log("Flask disease response:", flaskResponse.data);
 
-    const result = {
-        disease: String(flaskResponse.data?.disease || ""),
-        confidence: Number(flaskResponse.data?.confidence || 0),
-    };
+    const result = flaskResponse.data;
 
     if (isMongoReady()) {
         await DiseaseDetection.create({
             fileName: file?.originalname || "image.jpg",
             mimeType: file?.mimetype || "image/jpeg",
             size: file?.size || 0,
-            ...result,
+            disease: String(result?.disease || ""),
+            confidence: Number(result?.confidence || 0),
+            treatment: result?.treatment || undefined,
+            prevention: Array.isArray(result?.prevention) ? result.prevention : [],
         });
     } else {
         db.diseaseDetections.push({
@@ -145,7 +145,10 @@ export async function detectDiseaseFromImage(file) {
             fileName: file?.originalname || "image.jpg",
             mimeType: file?.mimetype || "image/jpeg",
             size: file?.size || 0,
-            ...result,
+            disease: String(result?.disease || ""),
+            confidence: Number(result?.confidence || 0),
+            treatment: result?.treatment || null,
+            prevention: Array.isArray(result?.prevention) ? result.prevention : [],
             createdAt: new Date().toISOString(),
         });
     }
