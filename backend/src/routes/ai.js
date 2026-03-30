@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { detectDisease, predict } from "../controllers/ai.controller.js";
+import { detectDisease, ocrPredictCrop, predict } from "../controllers/ai.controller.js";
 import { optionalAuth } from "../middleware/auth.js";
 import { validateCropPrediction } from "../middleware/validateCropPrediction.js";
 
@@ -13,5 +13,6 @@ export const aiRouter = express.Router();
 
 aiRouter.post("/predict", optionalAuth, validateCropPrediction, predict);
 aiRouter.post("/crop/predict", optionalAuth, validateCropPrediction, predict);
+aiRouter.post("/crop/ocr", optionalAuth, upload.single("image"), ocrPredictCrop);
 aiRouter.post("/disease/predict", optionalAuth, upload.single("image"), detectDisease);
 aiRouter.post("/detect-disease", optionalAuth, upload.single("image"), detectDisease);

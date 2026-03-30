@@ -4,6 +4,9 @@ import joblib
 import numpy as np
 from flask import Flask, jsonify, request
 import os
+from PIL import UnidentifiedImageError
+
+from ocr_utils import extract_text_from_uploaded_file, infer_season_from_rainfall, parse_soil_report_text
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -233,6 +236,12 @@ def get_top_recommendations(probabilities: np.ndarray) -> list[dict]:
     return recommendations
 
 
+def generate_recommendations(payload: dict) -> list[dict]:
+    input_array = build_feature_array(payload)
+    probabilities = MODEL.predict_proba(input_array)[0]
+    return get_top_recommendations(probabilities)
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
@@ -247,9 +256,7 @@ def predict():
         if validation_errors:
             return jsonify({"error": "Invalid input range", "details": validation_errors}), 400
 
-        input_array = build_feature_array(payload)
-        probabilities = MODEL.predict_proba(input_array)[0]
-        recommendations = get_top_recommendations(probabilities)
+        recommendations = generate_recommendations(payload)
 
         return jsonify({"recommendations": recommendations}), 200
     except ValueError as exc:
@@ -258,6 +265,64 @@ def predict():
         return jsonify({"error": str(exc)}), 500
     except Exception as exc:
         return jsonify({"error": f"Prediction failed: {exc}"}), 500
+
+
+@app.route("/ocr-predict", methods=["POST"])
+def ocr_predict():
+    try:
+        uploaded_file = request.files.get("file") or request.files.get("image")
+        if not uploaded_file or not uploaded_file.filename:
+            return jsonify({"error": "No file uploaded"}), 400
+
+        extracted_text = extract_text_from_uploaded_file(uploaded_file)
+        extracted_values, missing_fields = parse_soil_report_text(extracted_text)
+
+        location = str(request.form.get("location") or "Gujarat").strip() or "Gujarat"
+        season = str(request.form.get("season") or "").strip()
+        if not season:
+            season = infer_season_from_rainfall(extracted_values.get("rainfall"))
+        soil = str(request.form.get("soil") or "Loamy").strip() or "Loamy"
+
+        prediction_payload = {
+            **extracted_values,
+            "location": location,
+            "season": season,
+            "soil": soil,
+        }
+
+        recommendations = []
+        prediction_errors = {}
+
+        if not missing_fields:
+            _, prediction_errors = validate_payload(prediction_payload)
+            if not prediction_errors:
+                recommendations = generate_recommendations(prediction_payload)
+
+        return (
+            jsonify(
+                {
+                    "extracted": extracted_values,
+                    "missing_fields": missing_fields,
+                    "recommendations": recommendations,
+                    "context": {
+                        "location": location,
+                        "season": season,
+                        "soil": soil,
+                    },
+                    "raw_text": extracted_text,
+                    "prediction_errors": prediction_errors,
+                }
+            ),
+            200,
+        )
+    except UnidentifiedImageError:
+        return jsonify({"error": "Invalid image file"}), 400
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 500
+    except FileNotFoundError as exc:
+        return jsonify({"error": str(exc)}), 500
+    except Exception as exc:
+        return jsonify({"error": f"OCR prediction failed: {exc}"}), 500
 
 
 if __name__ == "__main__":

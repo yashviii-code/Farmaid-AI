@@ -79,6 +79,98 @@ export async function createPrediction(payload) {
     return flaskResponse.data;
 }
 
+export async function createOcrPredictionFromImage(file, payload = {}) {
+    console.log("Crop OCR request received:", {
+        fileName: file?.originalname || "",
+        mimeType: file?.mimetype || "",
+        size: file?.size || 0,
+        location: payload?.location || "",
+        season: payload?.season || "",
+        soil: payload?.soil || "",
+    });
+
+    const form = new FormData();
+    form.append("file", file.buffer, {
+        filename: file.originalname || "soil-report.jpg",
+        contentType: file.mimetype || "image/jpeg",
+        knownLength: file.size || undefined,
+    });
+
+    if (payload.location) {
+        form.append("location", String(payload.location));
+    }
+    if (payload.season) {
+        form.append("season", String(payload.season));
+    }
+    if (payload.soil) {
+        form.append("soil", String(payload.soil));
+    }
+
+    let flaskResponse;
+    try {
+        flaskResponse = await axios.post(`${FLASK_API_BASE_URL}/ocr-predict`, form, {
+            timeout: 30000,
+            headers: form.getHeaders(),
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity,
+        });
+    } catch (error) {
+        if (error.response) {
+            const message = error.response.data?.error || "Flask OCR service returned an error";
+            const wrappedError = new Error(message);
+            wrappedError.status = error.response.status;
+            wrappedError.details = error.response.data?.details || null;
+            throw wrappedError;
+        }
+
+        if (error.request) {
+            const wrappedError = new Error("Flask OCR service is not reachable");
+            wrappedError.status = 502;
+            throw wrappedError;
+        }
+
+        const wrappedError = new Error(error.message || "Failed to call Flask OCR service");
+        wrappedError.status = 500;
+        throw wrappedError;
+    }
+
+    console.log("Flask OCR response:", flaskResponse.data);
+
+    const result = flaskResponse.data;
+    const extracted = result?.extracted || {};
+    const recommendations = Array.isArray(result?.recommendations) ? result.recommendations : [];
+    const explanation = result?.explanation || "Recommendation generated from OCR-extracted report values.";
+
+    if (recommendations.length > 0) {
+        const input = {
+            N: Number(extracted.N),
+            P: Number(extracted.P),
+            K: Number(extracted.K),
+            temperature: Number(extracted.temperature),
+            humidity: Number(extracted.humidity),
+            ph: Number(extracted.ph),
+            rainfall: Number(extracted.rainfall),
+            location: String(result?.context?.location || payload.location || "").trim(),
+            season: String(result?.context?.season || payload.season || "").trim(),
+            soil: String(result?.context?.soil || payload.soil || "").trim(),
+        };
+
+        if (isMongoReady()) {
+            await CropPrediction.create({ input, recommendations, explanation });
+        } else {
+            db.cropPredictions.push({
+                id: uuid(),
+                input,
+                recommendations,
+                explanation,
+                createdAt: new Date().toISOString(),
+            });
+        }
+    }
+
+    return result;
+}
+
 export async function detectDiseaseFromImage(file) {
     console.log("Disease detection request received:", {
         fileName: file?.originalname || "",

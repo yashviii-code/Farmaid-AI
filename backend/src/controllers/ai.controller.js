@@ -65,3 +65,29 @@ export async function detectDisease(req, res) {
     );
   }
 }
+
+export async function ocrPredictCrop(req, res) {
+  if (!req.file) {
+    return fail(res, "image file is required", 400);
+  }
+
+  try {
+    const result = await aiService.createOcrPredictionFromImage(req.file, req.body || {});
+    const topCrop = result?.recommendations?.[0]?.crop;
+
+    if (topCrop) {
+      await logActivity(
+        req.user?.id,
+        "crop",
+        `${topCrop} crop recommendation generated from OCR report`,
+      );
+    }
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    return fail(res, error.message || "OCR prediction failed", error.status || 500, error.details || null);
+  }
+}
