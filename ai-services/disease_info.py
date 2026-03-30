@@ -70,6 +70,17 @@ disease_info = {
         ],
     ),
     "Apple___healthy": HEALTHY_DISEASE_INFO,
+    "Blueberry___healthy": build_disease_info(
+        "Blueberry Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Maintain proper irrigation and mulching.",
+            "Ensure balanced soil acidity and nutrition.",
+            "Keep monitoring plants for early stress signs.",
+        ],
+    ),
     "Cherry_(including_sour)___Powdery_mildew": build_disease_info(
         "Cherry Powdery Mildew",
         "Wettable Sulfur",
@@ -79,6 +90,28 @@ disease_info = {
             "Prune dense canopy to reduce humidity.",
             "Avoid excessive nitrogen fertilizer.",
             "Remove infected leaves early.",
+        ],
+    ),
+    "Cherry_(including_sour)___healthy": build_disease_info(
+        "Cherry Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Prune regularly for sunlight and airflow.",
+            "Keep irrigation consistent but not excessive.",
+            "Monitor foliage during humid periods.",
+        ],
+    ),
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": build_disease_info(
+        "Corn Cercospora Leaf Spot (Gray Leaf Spot)",
+        "Azoxystrobin",
+        "1 ml per liter of water",
+        "Every 10 to 14 days",
+        [
+            "Use resistant hybrids when available.",
+            "Rotate with non-host crops.",
+            "Manage crop residue after harvest.",
         ],
     ),
     "Corn_(maize)___Common_rust_": build_disease_info(
@@ -92,6 +125,28 @@ disease_info = {
             "Avoid excessive late-evening irrigation.",
         ],
     ),
+    "Corn_(maize)___Northern_Leaf_Blight": build_disease_info(
+        "Corn Northern Leaf Blight",
+        "Mancozeb",
+        "2.5 g per liter of water",
+        "Every 7 to 10 days",
+        [
+            "Rotate crops after maize harvest.",
+            "Remove infected residues from the field.",
+            "Maintain balanced plant nutrition.",
+        ],
+    ),
+    "Corn_(maize)___healthy": build_disease_info(
+        "Corn Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Scout fields regularly for early disease symptoms.",
+            "Maintain balanced fertilizer application.",
+            "Avoid water stress during critical growth stages.",
+        ],
+    ),
     "Grape___Black_rot": build_disease_info(
         "Grape Black Rot",
         "Mancozeb",
@@ -103,6 +158,29 @@ disease_info = {
             "Keep vineyard floor free from plant debris.",
         ],
     ),
+    "Grape___Esca_(Black_Measles)": build_disease_info(
+        "Grape Esca (Black Measles)",
+        "Carbendazim",
+        "1 g per liter of water",
+        "As advised after pruning",
+        [
+            "Prune infected wood during dry weather.",
+            "Seal pruning wounds after cutting.",
+            "Avoid water stress in vines.",
+        ],
+    ),
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": build_disease_info(
+        "Grape Leaf Blight (Isariopsis Leaf Spot)",
+        "Copper Oxychloride",
+        "2.5 g per liter of water",
+        "Every 7 to 10 days",
+        [
+            "Remove badly infected leaves from the vine.",
+            "Improve canopy airflow through pruning and spacing.",
+            "Avoid prolonged leaf wetness during irrigation.",
+        ],
+    ),
+    "Grape___healthy": HEALTHY_DISEASE_INFO,
     "Orange___Haunglongbing_(Citrus_greening)": build_disease_info(
         "Citrus Greening",
         "Imidacloprid",
@@ -112,6 +190,50 @@ disease_info = {
             "Control citrus psyllid populations.",
             "Use disease-free planting material.",
             "Remove severely infected trees if needed.",
+        ],
+    ),
+    "Peach___Bacterial_spot": build_disease_info(
+        "Peach Bacterial Spot",
+        "Copper Hydroxide",
+        "2 g per liter of water",
+        "Every 7 days",
+        [
+            "Avoid overhead irrigation.",
+            "Prune trees for airflow and quicker drying.",
+            "Use tolerant varieties where available.",
+        ],
+    ),
+    "Peach___healthy": build_disease_info(
+        "Peach Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Maintain orchard sanitation.",
+            "Ensure balanced nutrition and irrigation.",
+            "Monitor leaves and fruits regularly.",
+        ],
+    ),
+    "Pepper,_bell___Bacterial_spot": build_disease_info(
+        "Bell Pepper Bacterial Spot",
+        "Copper Oxychloride",
+        "2.5 g per liter of water",
+        "Every 7 days",
+        [
+            "Use clean seed and transplants.",
+            "Avoid handling wet plants.",
+            "Remove infected field debris promptly.",
+        ],
+    ),
+    "Pepper,_bell___healthy": build_disease_info(
+        "Bell Pepper Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Maintain good spacing between plants.",
+            "Avoid irregular watering stress.",
+            "Inspect lower leaves periodically.",
         ],
     ),
     "Potato___Early_blight": build_disease_info(
@@ -134,6 +256,72 @@ disease_info = {
             "Destroy infected plants immediately.",
             "Avoid prolonged leaf wetness.",
             "Use certified disease-free seed tubers.",
+        ],
+    ),
+    "Potato___healthy": build_disease_info(
+        "Potato Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Use certified seed tubers.",
+            "Maintain balanced fertilization and irrigation.",
+            "Hill up soil properly to protect tubers.",
+        ],
+    ),
+    "Raspberry___healthy": build_disease_info(
+        "Raspberry Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Prune canes regularly.",
+            "Ensure proper spacing for airflow.",
+            "Keep weed pressure low around plants.",
+        ],
+    ),
+    "Soybean___healthy": build_disease_info(
+        "Soybean Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Use high-quality treated seed.",
+            "Rotate with other crops to reduce disease pressure.",
+            "Scout fields during humid weather.",
+        ],
+    ),
+    "Squash___Powdery_mildew": build_disease_info(
+        "Squash Powdery Mildew",
+        "Wettable Sulfur",
+        "2 g per liter of water",
+        "Every 7 days",
+        [
+            "Improve spacing between plants.",
+            "Remove infected leaves early.",
+            "Avoid excess nitrogen application.",
+        ],
+    ),
+    "Strawberry___Leaf_scorch": build_disease_info(
+        "Strawberry Leaf Scorch",
+        "Copper Fungicide",
+        "2 g per liter of water",
+        "Every 7 to 10 days",
+        [
+            "Remove diseased leaves after harvest.",
+            "Avoid sprinkler irrigation when possible.",
+            "Keep beds clean and well ventilated.",
+        ],
+    ),
+    "Strawberry___healthy": build_disease_info(
+        "Strawberry Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Use clean mulch around plants.",
+            "Avoid overcrowding and stagnant moisture.",
+            "Inspect leaves and runners often.",
         ],
     ),
     "Tomato___Bacterial_spot": build_disease_info(
@@ -191,6 +379,28 @@ disease_info = {
             "Rotate away from tomato and related crops.",
         ],
     ),
+    "Tomato___Spider_mites Two-spotted_spider_mite": build_disease_info(
+        "Tomato Spider Mites (Two-Spotted Spider Mite)",
+        "Abamectin",
+        "0.5 ml per liter of water",
+        "Every 5 to 7 days",
+        [
+            "Spray undersides of leaves thoroughly.",
+            "Reduce dust around crop rows.",
+            "Avoid unnecessary broad-spectrum insecticides.",
+        ],
+    ),
+    "Tomato___Target_Spot": build_disease_info(
+        "Tomato Target Spot",
+        "Azoxystrobin",
+        "1 ml per liter of water",
+        "Every 7 to 10 days",
+        [
+            "Avoid long periods of leaf wetness.",
+            "Prune for airflow and light penetration.",
+            "Remove infected crop debris after harvest.",
+        ],
+    ),
     "Tomato___Tomato_Yellow_Leaf_Curl_Virus": build_disease_info(
         "Tomato Yellow Leaf Curl Virus",
         "Imidacloprid",
@@ -211,6 +421,17 @@ disease_info = {
             "Remove infected plants immediately.",
             "Disinfect hands and tools after handling plants.",
             "Use virus-free seed and seedlings.",
+        ],
+    ),
+    "Tomato___healthy": build_disease_info(
+        "Tomato Healthy",
+        "None",
+        "N/A",
+        "N/A",
+        [
+            "Maintain consistent watering and mulching.",
+            "Prune lower leaves for better airflow.",
+            "Inspect plants frequently during humid weather.",
         ],
     ),
 }

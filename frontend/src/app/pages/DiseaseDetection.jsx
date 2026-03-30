@@ -33,6 +33,8 @@ const DISEASE_COPY = {
     frequencyLabel: "Frequency",
     preventionTitle: "Prevention",
     noPrevention: "No prevention tips available.",
+    debugTitle: "Debug payload",
+    debugDescription: "Treatment details are missing in the response. This is the raw payload received from the backend.",
     emptyState: "Upload an image to start disease detection.",
     noFileError: "Please choose an image before submitting.",
     invalidTypeError: "Please upload a JPG, JPEG, or PNG image.",
@@ -50,6 +52,7 @@ export function DiseaseDetection() {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [result, setResult] = useState(null);
+  const [rawPrediction, setRawPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -78,11 +81,13 @@ export function DiseaseDetection() {
       setError(copy.invalidTypeError);
       setImage(null);
       setResult(null);
+      setRawPrediction(null);
       return;
     }
 
     setImage(nextFile);
     setResult(null);
+    setRawPrediction(null);
     setError("");
   };
 
@@ -100,19 +105,29 @@ export function DiseaseDetection() {
     try {
       const response = await detectDisease(image);
       const prediction = response?.data;
+      const treatment = prediction?.treatment || {
+        pesticide: prediction?.pesticide,
+        dosage: prediction?.dosage,
+        frequency: prediction?.frequency,
+      };
 
       if (!response?.success || !prediction?.disease) {
         throw new Error(response?.error || copy.failedDetection);
       }
 
+      console.log("Disease API response:", response);
+      console.log("Prediction payload:", prediction);
+
+      setRawPrediction(prediction || null);
       setResult({
         disease: prediction.disease,
         confidence: Number(prediction.confidence || 0),
-        treatment: prediction.treatment || {},
+        treatment,
         prevention: Array.isArray(prediction.prevention) ? prediction.prevention : [],
       });
     } catch (submitError) {
       setResult(null);
+      setRawPrediction(submitError?.response?.data || null);
       setError(submitError?.response?.data?.error || submitError.message || copy.failedDetection);
     } finally {
       setLoading(false);
@@ -122,6 +137,7 @@ export function DiseaseDetection() {
   const resetForm = () => {
     setImage(null);
     setResult(null);
+    setRawPrediction(null);
     setError("");
   };
 
@@ -306,6 +322,16 @@ export function DiseaseDetection() {
                         </div>
                       )}
                     </div>
+                    {rawPrediction &&
+                    (!result.treatment?.dosage || !result.treatment?.frequency) ? (
+                      <div className="rounded-2xl border border-red-400/20 bg-red-500/10 p-4">
+                        <div className="text-sm font-medium text-red-200">{copy.debugTitle}</div>
+                        <p className="mt-2 text-xs text-red-100/80">{copy.debugDescription}</p>
+                        <pre className="mt-3 overflow-x-auto rounded-xl bg-black/20 p-3 text-xs text-red-50">
+                          {JSON.stringify(rawPrediction, null, 2)}
+                        </pre>
+                      </div>
+                    ) : null}
                   </div>
                 ) : (
                   <div className="mt-5 rounded-2xl border border-dashed border-slate-700 p-6 text-sm text-slate-400">
