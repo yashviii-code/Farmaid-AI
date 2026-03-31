@@ -8,6 +8,7 @@ import { settingsRouter } from "./routes/settings.js";
 import { locationRouter } from "./routes/location.js";
 import { activityRouter } from "./routes/activity.js";
 import { dashboardRouter } from "./routes/dashboard.js";
+import { logsRouter } from "./routes/logs.js";
 import { farmersRouter } from "./routes/farmers.js";
 import { fail, ok } from "./utils/response.js";
 
@@ -36,6 +37,7 @@ export function createApp() {
   app.use("/api/farmers", farmersRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/settings", settingsRouter);
+  app.use("/api/logs", logsRouter);
 
   app.use((_, res) => fail(res, "Not Found", 404));
 

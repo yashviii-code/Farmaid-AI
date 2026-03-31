@@ -19,7 +19,7 @@ function normalizeAdminActivity(activity, user) {
   };
 }
 
-export async function createActivity({ userId, type, message }) {
+export async function createActivity({ userId, type, message, userName = "", location = "" }) {
   if (!userId) {
     return null;
   }
@@ -27,8 +27,10 @@ export async function createActivity({ userId, type, message }) {
   if (isMongoReady()) {
     const activity = await Activity.create({
       userId,
+      userName,
       type,
       message,
+      location,
     });
 
     return normalizeActivity(activity);
@@ -37,8 +39,10 @@ export async function createActivity({ userId, type, message }) {
   const activity = {
     id: uuid(),
     userId: String(userId),
+    userName,
     type,
     message,
+    location,
     createdAt: new Date().toISOString(),
   };
 
