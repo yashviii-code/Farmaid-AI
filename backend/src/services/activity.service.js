@@ -10,6 +10,15 @@ function normalizeActivity(activity) {
   };
 }
 
+function normalizeAdminActivity(activity, user) {
+  return {
+    userName: user?.fullName || user?.name || "Unknown User",
+    message: activity.message || activity.actionType || "Activity recorded",
+    location: user?.location || "",
+    createdAt: activity.createdAt,
+  };
+}
+
 export async function createActivity({ userId, type, message }) {
   if (!userId) {
     return null;
@@ -55,4 +64,27 @@ export async function getRecentActivities(userId, limit = 10) {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, safeLimit)
     .map(normalizeActivity);
+}
+
+export async function getRecentActivitiesForAdmin(limit = 10) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 10);
+
+  if (isMongoReady()) {
+    const activities = await Activity.find()
+      .sort({ createdAt: -1 })
+      .limit(safeLimit)
+      .populate("userId", "fullName location")
+      .lean();
+
+    return activities.map((activity) => normalizeAdminActivity(activity, activity.userId));
+  }
+
+  return db.activityLogs
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, safeLimit)
+    .map((activity) => {
+      const user = db.users.find((entry) => String(entry.id) === String(activity.userId));
+      return normalizeAdminActivity(activity, user);
+    });
 }

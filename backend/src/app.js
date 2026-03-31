@@ -7,6 +7,7 @@ import { adminRouter } from "./routes/admin.js";
 import { settingsRouter } from "./routes/settings.js";
 import { locationRouter } from "./routes/location.js";
 import { activityRouter } from "./routes/activity.js";
+import { dashboardRouter } from "./routes/dashboard.js";
 import { fail, ok } from "./utils/response.js";
 
 export function createApp() {
@@ -30,6 +31,7 @@ export function createApp() {
   app.use("/api", aiRouter);
   app.use("/api/location", locationRouter);
   app.use("/api/activity", activityRouter);
+  app.use("/api/dashboard", dashboardRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/settings", settingsRouter);
 

@@ -1,7 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const LanguageContext = createContext(undefined);
-
 export const translations = {
   english: {
     nav: {
@@ -272,13 +270,29 @@ export const translations = {
   },
 };
 
+const defaultLanguageContext = {
+  language: 'english',
+  changeLanguage: () => {},
+  t: translations.english,
+  translations,
+};
+
+const LanguageContext = createContext(defaultLanguageContext);
+
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState('english');
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('farmaidLanguage');
     const savedShortCode = localStorage.getItem('lang');
-    const mappedShortCode = savedShortCode === 'gu' ? 'gujarati' : savedShortCode === 'en' ? 'english' : null;
+    const mappedShortCode =
+      savedShortCode === 'gu'
+        ? 'gujarati'
+        : savedShortCode === 'hi'
+          ? 'hindi'
+          : savedShortCode === 'en'
+            ? 'english'
+            : null;
     const resolvedLanguage = savedLanguage || mappedShortCode;
 
     if (resolvedLanguage && translations[resolvedLanguage]) {
@@ -292,6 +306,8 @@ export function LanguageProvider({ children }) {
       localStorage.setItem('farmaidLanguage', newLanguage);
       if (newLanguage === 'english') {
         localStorage.setItem('lang', 'en');
+      } else if (newLanguage === 'hindi') {
+        localStorage.setItem('lang', 'hi');
       } else if (newLanguage === 'gujarati') {
         localStorage.setItem('lang', 'gu');
       }
@@ -308,9 +324,5 @@ export function LanguageProvider({ children }) {
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
+  return useContext(LanguageContext);
 }

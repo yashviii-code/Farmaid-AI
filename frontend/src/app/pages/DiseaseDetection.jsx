@@ -7,6 +7,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { detectDisease } from "../api/disease.api";
 import { useLanguage } from "../context/LanguageContext";
 import { getLocalizedCopy } from "../lib/getLocalizedCopy";
+import { translateDynamicValue } from "../lib/translate";
 
 const DISEASE_COPY = {
   english: {
@@ -40,6 +41,68 @@ const DISEASE_COPY = {
     invalidTypeError: "Please upload a JPG, JPEG, or PNG image.",
     failedDetection: "Disease detection failed. Please try again.",
   },
+  hindi: {
+    backToDashboard: "डैशबोर्ड पर वापस जाएं",
+    eyebrow: "एआई पौधा स्वास्थ्य स्कैन",
+    title: "रोग पहचान",
+    subtitle: "पत्ते की स्पष्ट तस्वीर अपलोड करें और संभावित रोग तथा उसका विश्वास स्तर देखें।",
+    uploadTitle: "पौधे की छवि अपलोड करें",
+    uploadDescription: "समर्थित प्रारूप: JPG, JPEG, PNG. अधिकतम फ़ाइल आकार: 10 MB.",
+    chooseImage: "छवि चुनें",
+    selectedFile: "चयनित फ़ाइल",
+    previewTitle: "छवि पूर्वावलोकन",
+    readyTitle: "विश्लेषण के लिए तैयार",
+    readyDescription: "हम छवि को बैकएंड पर भेजेंगे और रोग का नाम व विश्वास स्तर दिखाएंगे।",
+    detectDisease: "रोग पहचानें",
+    detecting: "रोग की पहचान हो रही है...",
+    uploadAnother: "दूसरी छवि अपलोड करें",
+    resultTitle: "परिणाम",
+    diseaseLabel: "रोग",
+    confidenceLabel: "विश्वास",
+    treatmentTitle: "उपचार",
+    pesticideLabel: "कीटनाशक",
+    dosageLabel: "मात्रा",
+    frequencyLabel: "आवृत्ति",
+    preventionTitle: "बचाव",
+    noPrevention: "कोई बचाव सुझाव उपलब्ध नहीं है।",
+    debugTitle: "डिबग पेलोड",
+    debugDescription: "रिस्पॉन्स में उपचार विवरण नहीं मिला। यह बैकएंड से मिला कच्चा पेलोड है।",
+    emptyState: "रोग पहचान शुरू करने के लिए छवि अपलोड करें।",
+    noFileError: "सबमिट करने से पहले कृपया एक छवि चुनें।",
+    invalidTypeError: "कृपया JPG, JPEG, या PNG छवि अपलोड करें।",
+    failedDetection: "रोग पहचान विफल रही। कृपया फिर से प्रयास करें।",
+  },
+  gujarati: {
+    backToDashboard: "ડેશબોર્ડ પર પાછા જાઓ",
+    eyebrow: "AI છોડ આરોગ્ય સ્કેન",
+    title: "રોગ શોધ",
+    subtitle: "પાનની સ્પષ્ટ છબી અપલોડ કરો અને સંભવિત રોગ સાથે વિશ્વાસ સ્તર મેળવો.",
+    uploadTitle: "છોડની છબી અપલોડ કરો",
+    uploadDescription: "સમર્થિત ફોર્મેટ: JPG, JPEG, PNG. મહત્તમ ફાઇલ કદ: 10 MB.",
+    chooseImage: "છબી પસંદ કરો",
+    selectedFile: "પસંદ કરેલ ફાઇલ",
+    previewTitle: "છબી પૂર્વાવલોકન",
+    readyTitle: "વિશ્લેષણ માટે તૈયાર",
+    readyDescription: "અમે છબી બેકએન્ડ પર મોકલીને રોગનું નામ અને વિશ્વાસ સ્તર બતાવીશું.",
+    detectDisease: "રોગ શોધો",
+    detecting: "રોગ શોધાઈ રહ્યો છે...",
+    uploadAnother: "બીજી છબી અપલોડ કરો",
+    resultTitle: "શોધ પરિણામ",
+    diseaseLabel: "રોગ",
+    confidenceLabel: "વિશ્વાસ",
+    treatmentTitle: "ઉપચાર",
+    pesticideLabel: "દવા",
+    dosageLabel: "માત્રા",
+    frequencyLabel: "આવર્તન",
+    preventionTitle: "પ્રતિરોધ",
+    noPrevention: "પ્રતિરોધ સૂચનો ઉપલબ્ધ નથી.",
+    debugTitle: "ડિબગ પેલોડ",
+    debugDescription: "રિસ્પોન્સમાં ઉપચારની વિગતો મળેલી નથી. બેકએન્ડથી મળેલો કાચો પેલોડ અહીં છે.",
+    emptyState: "રોગ શોધવા માટે છબી અપલોડ કરો.",
+    noFileError: "સબમિટ કરતા પહેલાં કૃપા કરીને છબી પસંદ કરો.",
+    invalidTypeError: "કૃપા કરીને JPG, JPEG, અથવા PNG છબી અપલોડ કરો.",
+    failedDetection: "રોગ શોધ નિષ્ફળ ગઈ. કૃપા કરીને ફરી પ્રયાસ કરો.",
+  },
 };
 
 function formatConfidence(value) {
@@ -55,6 +118,11 @@ export function DiseaseDetection() {
   const [rawPrediction, setRawPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const translateValue = (value, fallback = "N/A") => {
+    const resolvedValue = value || fallback;
+    return translateDynamicValue(resolvedValue, language);
+  };
 
   useEffect(() => {
     if (!image) {
@@ -114,9 +182,6 @@ export function DiseaseDetection() {
       if (!response?.success || !prediction?.disease) {
         throw new Error(response?.error || copy.failedDetection);
       }
-
-      console.log("Disease API response:", response);
-      console.log("Prediction payload:", prediction);
 
       setRawPrediction(prediction || null);
       setResult({
@@ -257,7 +322,9 @@ export function DiseaseDetection() {
                   <div className="mt-5 space-y-4">
                     <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4">
                       <div className="text-sm text-emerald-200">{copy.diseaseLabel}</div>
-                      <div className="mt-1 text-2xl font-semibold text-white">{result.disease}</div>
+                      <div className="mt-1 text-2xl font-semibold text-white">
+                        {translateValue(result.disease, result.disease)}
+                      </div>
                     </div>
                     <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
                       <div className="text-sm text-cyan-200">{copy.confidenceLabel}</div>
@@ -279,7 +346,7 @@ export function DiseaseDetection() {
                             {copy.pesticideLabel}
                           </div>
                           <div className="mt-1 text-sm font-medium text-white">
-                            {result.treatment?.pesticide || "N/A"}
+                            {translateValue(result.treatment?.pesticide)}
                           </div>
                         </div>
                         <div className="rounded-xl border border-amber-300/10 bg-black/10 p-3">
@@ -287,7 +354,7 @@ export function DiseaseDetection() {
                             {copy.dosageLabel}
                           </div>
                           <div className="mt-1 text-sm font-medium text-white">
-                            {result.treatment?.dosage || "N/A"}
+                            {translateValue(result.treatment?.dosage)}
                           </div>
                         </div>
                         <div className="rounded-xl border border-amber-300/10 bg-black/10 p-3">
@@ -295,7 +362,7 @@ export function DiseaseDetection() {
                             {copy.frequencyLabel}
                           </div>
                           <div className="mt-1 text-sm font-medium text-white">
-                            {result.treatment?.frequency || "N/A"}
+                            {translateValue(result.treatment?.frequency)}
                           </div>
                         </div>
                       </div>
@@ -312,7 +379,7 @@ export function DiseaseDetection() {
                               className="flex items-start gap-3 rounded-xl border border-fuchsia-300/10 bg-black/10 p-3 text-sm text-slate-100"
                             >
                               <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-fuchsia-300" />
-                              <span>{tip}</span>
+                              <span>{translateValue(tip, tip)}</span>
                             </li>
                           ))}
                         </ul>

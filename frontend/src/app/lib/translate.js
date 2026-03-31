@@ -1,9 +1,11 @@
 import en from "../../i18n/en.json";
 import gu from "../../i18n/gu.json";
+import hi from "../../i18n/hi.json";
 
 const dictionaries = {
   en,
   gu,
+  hi,
 };
 
 const languageMap = {
@@ -11,6 +13,8 @@ const languageMap = {
   english: "en",
   gu: "gu",
   gujarati: "gu",
+  hi: "hi",
+  hindi: "hi",
 };
 
 function normalizeKey(key) {
@@ -45,4 +49,16 @@ export function translate(key, language, params = {}) {
   return String(template).replace(/\{(\w+)\}/g, (_, token) => {
     return params[token] ?? `{${token}}`;
   });
+}
+
+export function getTranslationKey(key) {
+  return normalizeKey(key);
+}
+
+export function translateDynamicValue(value, language) {
+  if (value === undefined || value === null || value === "") {
+    return value;
+  }
+
+  return translate(value, language);
 }
