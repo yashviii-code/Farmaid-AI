@@ -4,11 +4,10 @@ import { Activity } from "../models/activity.model.js";
 import { CropPrediction } from "../models/CropPrediction.js";
 import { DiseaseDetection } from "../models/DiseaseDetection.js";
 import { User } from "../models/User.js";
+import { isVisibleFarmer } from "../utils/farmerFilters.js";
 
 const MONTH_WINDOW = 6;
 const OTHER_CROPS_LABEL = "Others";
-const TEST_FARMER_NAME = "API Test Farmer";
-const TEST_EMAIL_PATTERN = /^apitest\+/i;
 
 function getLastMonths(windowSize = MONTH_WINDOW) {
   const months = [];
@@ -50,14 +49,6 @@ function mapCountsToMonths(months, countsByKey) {
   return months.map((month) => Number(countsByKey.get(month.key) || 0));
 }
 
-function isProductionFarmerRecord(user) {
-  return (
-    user?.role === "farmer" &&
-    String(user?.fullName || "").trim() !== TEST_FARMER_NAME &&
-    !TEST_EMAIL_PATTERN.test(String(user?.email || "").trim())
-  );
-}
-
 async function getMongoStats() {
   const [farmerUsers, totalCropPredictions, totalDiseaseDetections] = await Promise.all([
     User.find({ role: "farmer" }).select({ _id: 1, fullName: 1, email: 1, role: 1 }).lean(),
@@ -65,7 +56,7 @@ async function getMongoStats() {
     DiseaseDetection.countDocuments(),
   ]);
 
-  const realFarmerUsers = farmerUsers.filter(isProductionFarmerRecord);
+  const realFarmerUsers = farmerUsers.filter(isVisibleFarmer);
   const totalFarmers = realFarmerUsers.length;
   const realFarmerIds = new Set(realFarmerUsers.map((user) => String(user._id)));
 
@@ -89,7 +80,7 @@ async function getMongoStats() {
 }
 
 function getMemoryStats() {
-  const realFarmers = db.users.filter(isProductionFarmerRecord);
+  const realFarmers = db.users.filter(isVisibleFarmer);
   const totalFarmers = realFarmers.length;
   const totalCropPredictions = db.cropPredictions.length;
   const totalDiseaseDetections = db.diseaseDetections.length;
