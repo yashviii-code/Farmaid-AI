@@ -72,15 +72,21 @@ export function AuthProvider({ children }) {
     setUser(nextUser);
     localStorage.setItem("farmaidUser", JSON.stringify(nextUser));
 
-    const profileData = await getMyProfile();
-    const profile = profileData.profile || {
-      ...DEFAULT_PROFILE,
-      name: fullName,
-      email,
-    };
+    try {
+      const profileData = await getMyProfile();
+      const profile = profileData.profile || {
+        ...DEFAULT_PROFILE,
+        name: fullName,
+        email,
+      };
 
-    setFarmerProfile(profile);
-    localStorage.setItem("farmerProfile", JSON.stringify(profile));
+      setFarmerProfile(profile);
+      localStorage.setItem("farmerProfile", JSON.stringify(profile));
+    } catch {
+      const fallbackProfile = { ...DEFAULT_PROFILE, name: fullName, email };
+      setFarmerProfile(fallbackProfile);
+      localStorage.setItem("farmerProfile", JSON.stringify(fallbackProfile));
+    }
 
     return data;
   };

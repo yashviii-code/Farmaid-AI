@@ -172,8 +172,8 @@ export function LandingPage() {
               <motion.div animate={floatingAnimation} className="relative z-10">
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl blur-3xl opacity-30"></div>
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1761839257144-297ce252742e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhZ3JpY3VsdHVyZSUyMHRlY2hub2xvZ3l8ZW58MXx8fHwxNzczODM5NjQ1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Modern Agriculture"
+                  src="/hero-farmer-3.png"
+                  alt="Farmer thumbs up"
                   className="relative rounded-3xl shadow-2xl border border-green-500/20"
                 />
               </motion.div>

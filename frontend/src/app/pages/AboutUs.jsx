@@ -42,19 +42,14 @@ export function AboutUs() {
 
   const team = [
     {
-      name: "Dr. Sarah Johnson",
-      role: extraCopy.teamRoles[0],
-      image: "https://images.unsplash.com/photo-1687473774629-b160f5012e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyYWwlMjByZXNlYXJjaCUyMHNjaWVudGlzdHxlbnwxfHx8fDE3NzM3ODI2MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      name: "Yashvi Bhavsar",
+      role: "Frontend Developer",
+      image: "/yashvi.jpg",
     },
     {
-      name: "John Martinez",
-      role: extraCopy.teamRoles[1],
-      image: "https://images.unsplash.com/photo-1567471945805-069e09c11098?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMHRlYW0lMjBmYXJtZXJzJTIwd29ya2luZ3xlbnwxfHx8fDE3NzM4Mzk2NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    },
-    {
-      name: "Emily Chen",
-      role: extraCopy.teamRoles[2],
-      image: "https://images.unsplash.com/photo-1768602182173-154eeedeed05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydCUyMGZhcm1pbmclMjBpbm5vdmF0aW9ufGVufDF8fHx8MTc3MzgzOTY0Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      name: "Viraj Solanki",
+      role: "Backend & AI Integration",
+      image: "/viraj.jpg",
     },
   ];
 
@@ -205,7 +200,7 @@ export function AboutUs() {
 
       {/* Team Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -220,7 +215,7 @@ export function AboutUs() {
             <p className="text-xl dark:text-gray-400 text-slate-600">{t.aboutUs.teamSubtitle}</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
             {team.map((member, index) => (
               <motion.div
                 key={index}
@@ -233,7 +228,7 @@ export function AboutUs() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity"></div>
                 <div className="relative dark:bg-slate-900/80 bg-white/80 backdrop-blur-xl dark:border-green-500/20 border-green-200 rounded-2xl overflow-hidden dark:hover:border-green-500/50 hover:border-green-400 transition-all border">
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-80 overflow-hidden">
                     <ImageWithFallback
                       src={member.image}
                       alt={member.name}
@@ -252,47 +247,7 @@ export function AboutUs() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r dark:from-green-400 dark:to-emerald-400 from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                {t.aboutUs.milestones.title}
-              </span>
-            </h2>
-          </motion.div>
 
-          <div className="relative">
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 dark:bg-gradient-to-b dark:from-green-500 dark:to-emerald-500 from-green-700 to-emerald-700 bg-gradient-to-b"></div>
-            
-            {t.aboutUs.milestones.timeline.map((milestone, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className={`relative flex items-center mb-12 ${
-                  index % 2 === 0 ? "flex-row" : "flex-row-reverse"
-                }`}
-              >
-                <div className={`w-1/2 ${index % 2 === 0 ? "text-right pr-8" : "text-left pl-8"}`}>
-                  <div className="dark:bg-slate-900/80 bg-white/80 backdrop-blur-xl dark:border-green-500/20 border-green-200 rounded-xl p-6 dark:hover:border-green-500/50 hover:border-green-400 transition-all border">
-                    <div className="text-3xl font-bold dark:text-green-400 text-green-600 mb-2">{milestone.year}</div>
-                    <div className="text-xl dark:text-white text-slate-900">{milestone.event}</div>
-                  </div>
-                </div>
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full dark:border-4 dark:border-slate-950 border-4 border-white"></div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="dark:border-green-500/20 border-green-300 py-12 px-4 sm:px-6 lg:px-8 border-t">
