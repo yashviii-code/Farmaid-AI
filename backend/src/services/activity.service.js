@@ -1,0 +1,94 @@
+import { v4 as uuid } from "uuid";
+import { isMongoReady } from "../config/database.js";
+import { db } from "../data/store.js";
+import { Activity } from "../models/activity.model.js";
+
+function normalizeActivity(activity) {
+  return {
+    message: activity.message,
+    createdAt: activity.createdAt,
+  };
+}
+
+function normalizeAdminActivity(activity, user) {
+  return {
+    userName: user?.fullName || user?.name || "Unknown User",
+    message: activity.message || activity.actionType || "Activity recorded",
+    location: user?.location || "",
+    createdAt: activity.createdAt,
+  };
+}
+
+export async function createActivity({ userId, type, message, userName = "", location = "" }) {
+  if (!userId) {
+    return null;
+  }
+
+  if (isMongoReady()) {
+    const activity = await Activity.create({
+      userId,
+      userName,
+      type,
+      message,
+      location,
+    });
+
+    return normalizeActivity(activity);
+  }
+
+  const activity = {
+    id: uuid(),
+    userId: String(userId),
+    userName,
+    type,
+    message,
+    location,
+    createdAt: new Date().toISOString(),
+  };
+
+  db.activityLogs.push(activity);
+  return normalizeActivity(activity);
+}
+
+export async function getRecentActivities(userId, limit = 10) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 10);
+
+  if (isMongoReady()) {
+    const activities = await Activity.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(safeLimit)
+      .select({ message: 1, createdAt: 1, _id: 0 })
+      .lean();
+
+    return activities.map(normalizeActivity);
+  }
+
+  return db.activityLogs
+    .filter((entry) => String(entry.userId) === String(userId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, safeLimit)
+    .map(normalizeActivity);
+}
+
+export async function getRecentActivitiesForAdmin(limit = 10) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 10);
+
+  if (isMongoReady()) {
+    const activities = await Activity.find()
+      .sort({ createdAt: -1 })
+      .limit(safeLimit)
+      .populate("userId", "fullName location")
+      .lean();
+
+    return activities.map((activity) => normalizeAdminActivity(activity, activity.userId));
+  }
+
+  return db.activityLogs
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, safeLimit)
+    .map((activity) => {
+      const user = db.users.find((entry) => String(entry.id) === String(activity.userId));
+      return normalizeAdminActivity(activity, user);
+    });
+}
